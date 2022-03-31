@@ -7,6 +7,7 @@ class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {}
+    
 
     this.waitForSocketConnection(() => {
       WebSocketInstance.addCallbacks(
@@ -39,7 +40,25 @@ class Chat extends React.Component {
 
   setMessages(messages) {
     this.setState({
-      messages: messages.reverse()
+      messages: messages
+    });
+  }
+
+  sendMessageHandler = e => {
+    e.preventDefault();
+    const messageObject = {
+      from: 'admin',
+      content: this.state.message
+    }
+    WebSocketInstance.newChatMessage(messageObject);
+    this.setState({
+      message: ''
+    });
+  }
+  
+  messageChangeHandler = event => {
+    this.setState({
+      message:event.target.value
     });
   }
 
@@ -52,6 +71,10 @@ class Chat extends React.Component {
           <img src='http://sun9-81.userapi.com/sun9-73/s/v1/if1/POkG8QLF2aviCOpRrXdnhy-NMirwkhVw2ng3k5YYuyRL8tggXoTEGRR98p8OJIXKXfiSbmCp.jpg?size=200x200&quality=96&crop=0,13,200,200&ava=1'/>
           <p>
             {message.content}
+            <br/>
+            <small>
+              { Math.round((new Date().getTime() - new Date(message.timestamp)) / 60000)} minutes ago  
+            </small>
           </p>
 
 
@@ -86,13 +109,20 @@ class Chat extends React.Component {
                 </ul>
               </div>
               <div className="message-input">
-                <div className="wrap">
-                <input id="chat-message-input" type="text" placeholder="Write your message..." />
-                <i className="fa fa-paperclip attachment" aria-hidden="true"></i>
-                <button id="chat-message-submit" className="submit">
-                  <i className="fa fa-paper-plane" aria-hidden="true"></i>
-                </button>
-                </div>
+                <form onSubmit={this.sendMessageHandler}>
+                    <div className="wrap">
+                    <input 
+                      onChange={this.messageChangeHandler}
+                      value={this.state.message}
+                      id="chat-message-input" 
+                      type="text" 
+                      placeholder="Write your message..." />
+                    <i className="fa fa-paperclip attachment" aria-hidden="true"></i>
+                    <button id="chat-message-submit" className="submit">
+                      <i className="fa fa-paper-plane" aria-hidden="true"></i>
+                    </button>
+                    </div>
+                </form>
               </div>
             </div>
             </div>

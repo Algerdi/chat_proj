@@ -22,8 +22,11 @@ class WebSocketService {
         this.socketRef.onopen = () => {
             console.log('websocket open');
         };
+        this.socketNewMessage(JSON.stringify({
+            command: 'fetch_messages'
+        }))
         this.socketRef.onmessage = e => {
-            // sending a message
+            this.socketNewMessage(e.data);
         };
         this.socketRef.onerror = e => {
             console.log(e.message);
